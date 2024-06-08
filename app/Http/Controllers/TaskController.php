@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Actions\Task\TaskAction;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use App\Http\Resources\Task as TaskResource;
 
 class TaskController extends Controller
 {
@@ -49,7 +50,7 @@ class TaskController extends Controller
             'status' => 200,
             'message' => 'Task Created',
             'data' => [
-              'task' => $task,
+              'task' => new TaskResource($task),
             ],
         ]);
     }
@@ -64,7 +65,7 @@ class TaskController extends Controller
                 'status' => 200,
                 'message' => 'Task',
                 'data' => [
-                  'task' => $task,
+                  'task' => new TaskResource($task),
                 ],
             ]);
         }
@@ -111,7 +112,7 @@ class TaskController extends Controller
             'status' => 200,
             'message' => 'Task',
             'data' => [
-              'task' => $task,
+              'task' => new TaskResource($task),
             ],
         ]);
     }
