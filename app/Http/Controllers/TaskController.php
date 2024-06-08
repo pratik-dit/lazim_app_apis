@@ -8,6 +8,7 @@ use App\Actions\Task\TaskAction;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Http\Resources\Task as TaskResource;
+use App\Http\Requests\TaskStoreRequest;
 
 class TaskController extends Controller
 {
@@ -24,23 +25,8 @@ class TaskController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(TaskStoreRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:2000',
-            'description' => 'nullable|string',
-            'status' => 'nullable|string|in:todo,in_progress,blocked,in_review,completed',
-        ]);
-    
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'status' => 422,
-                'message' => 'Validation errors',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         $data = $request->all();
         $data['created_by'] = auth()->user() ? auth()->user()->id : null;
         $task = TaskAction::create($data);
@@ -78,7 +64,7 @@ class TaskController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(TaskStoreRequest $request, $id)
     {
         $task = TaskAction::get($id);
 
@@ -89,21 +75,6 @@ class TaskController extends Controller
                 'message' => 'Task Not found',
                 'data' => [],
             ]);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:2000',
-            'description' => 'nullable|string',
-            'status' => 'nullable|string|in:todo,in_progress,blocked,in_review,completed',
-        ]);
-    
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'status' => 422,
-                'message' => 'Validation errors',
-                'errors' => $validator->errors()
-            ], 422);
         }
 
         $task = TaskAction::update($task, $request);
